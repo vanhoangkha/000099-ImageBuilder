@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.99.1" />
+    <meta name="description" content="">
+<meta name="author" content="journeyoftheaverageguy@gmail.com">
+
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
+    <title>Build Automation with SSM :: Level 300: Autonomous Patching with EC2 Image Builder and System Manager</title>
+
+    
+    <link href="/css/nucleus.css?1657337708" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1657337708" rel="stylesheet">
+    <link href="/css/hybrid.css?1657337708" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1657337708" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1657337708" rel="stylesheet">
+    <link href="/css/auto-complete.css?1657337708" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1657337708" rel="stylesheet">
+    <link href="/css/theme.css?1657337708" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1657337708" rel="stylesheet">
+    
+    <link href="/css/theme-workshop.css?1657337708" rel="stylesheet">
+    
+    
+
+    <script src="/js/jquery-3.3.1.min.js?1657337708"></script>
+
+    <style>
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+  </head>
+  <body class="" data-url="/4-ssm-build-automation/">
+    <nav id="sidebar" class="showVisitedLinks">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" href="/">
+
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" width="30%"><defs><style>.cls-1{fill:#fff;}.cls-2{fill:#f90;fill-rule:evenodd;}</style></defs><title>AWS-Logo_White-Color</title><path class="cls-1" d="M14.09,10.85a4.7,4.7,0,0,0,.19,1.48,7.73,7.73,0,0,0,.54,1.19.77.77,0,0,1,.12.38.64.64,0,0,1-.32.49l-1,.7a.83.83,0,0,1-.44.15.69.69,0,0,1-.49-.23,3.8,3.8,0,0,1-.6-.77q-.25-.42-.51-1a6.14,6.14,0,0,1-4.89,2.3,4.54,4.54,0,0,1-3.32-1.19,4.27,4.27,0,0,1-1.22-3.2A4.28,4.28,0,0,1,3.61,7.75,6.06,6.06,0,0,1,7.69,6.46a12.47,12.47,0,0,1,1.76.13q.92.13,1.91.36V5.73a3.65,3.65,0,0,0-.79-2.66A3.81,3.81,0,0,0,7.86,2.3a7.71,7.71,0,0,0-1.79.22,12.78,12.78,0,0,0-1.79.57,4.55,4.55,0,0,1-.58.22l-.26,0q-.35,0-.35-.52V2a1.09,1.09,0,0,1,.12-.58,1.2,1.2,0,0,1,.47-.35A10.88,10.88,0,0,1,5.77.32,10.19,10.19,0,0,1,8.36,0a6,6,0,0,1,4.35,1.35,5.49,5.49,0,0,1,1.38,4.09ZM7.34,13.38a5.36,5.36,0,0,0,1.72-.31A3.63,3.63,0,0,0,10.63,12,2.62,2.62,0,0,0,11.19,11a5.63,5.63,0,0,0,.16-1.44v-.7a14.35,14.35,0,0,0-1.53-.28,12.37,12.37,0,0,0-1.56-.1,3.84,3.84,0,0,0-2.47.67A2.34,2.34,0,0,0,5,11a2.35,2.35,0,0,0,.61,1.76A2.4,2.4,0,0,0,7.34,13.38Zm13.35,1.8a1,1,0,0,1-.64-.16,1.3,1.3,0,0,1-.35-.65L15.81,1.51a3,3,0,0,1-.15-.67.36.36,0,0,1,.41-.41H17.7a1,1,0,0,1,.65.16,1.4,1.4,0,0,1,.33.65l2.79,11,2.59-11A1.17,1.17,0,0,1,24.39.6a1.1,1.1,0,0,1,.67-.16H26.4a1.1,1.1,0,0,1,.67.16,1.17,1.17,0,0,1,.32.65L30,12.39,32.88,1.25A1.39,1.39,0,0,1,33.22.6a1,1,0,0,1,.65-.16h1.54a.36.36,0,0,1,.41.41,1.36,1.36,0,0,1,0,.26,3.64,3.64,0,0,1-.12.41l-4,12.86a1.3,1.3,0,0,1-.35.65,1,1,0,0,1-.64.16H29.25a1,1,0,0,1-.67-.17,1.26,1.26,0,0,1-.32-.67L25.67,3.64,23.11,14.34a1.26,1.26,0,0,1-.32.67,1,1,0,0,1-.67.17Zm21.36.44a11.28,11.28,0,0,1-2.56-.29,7.44,7.44,0,0,1-1.92-.67,1,1,0,0,1-.61-.93v-.84q0-.52.38-.52a.9.9,0,0,1,.31.06l.42.17a8.77,8.77,0,0,0,1.83.58,9.78,9.78,0,0,0,2,.2,4.48,4.48,0,0,0,2.43-.55,1.76,1.76,0,0,0,.86-1.57,1.61,1.61,0,0,0-.45-1.16A4.29,4.29,0,0,0,43,9.22l-2.41-.76A5.15,5.15,0,0,1,38,6.78a3.94,3.94,0,0,1-.83-2.41,3.7,3.7,0,0,1,.45-1.85,4.47,4.47,0,0,1,1.19-1.37A5.27,5.27,0,0,1,40.51.29,7.4,7.4,0,0,1,42.6,0a8.87,8.87,0,0,1,1.12.07q.57.07,1.08.19t.95.26a4.27,4.27,0,0,1,.7.29,1.59,1.59,0,0,1,.49.41.94.94,0,0,1,.15.55v.79q0,.52-.38.52a1.76,1.76,0,0,1-.64-.2,7.74,7.74,0,0,0-3.2-.64,4.37,4.37,0,0,0-2.21.47,1.6,1.6,0,0,0-.79,1.48,1.58,1.58,0,0,0,.49,1.18,4.94,4.94,0,0,0,1.83.92L44.55,7a5.08,5.08,0,0,1,2.57,1.6A3.76,3.76,0,0,1,47.9,11a4.21,4.21,0,0,1-.44,1.93,4.4,4.4,0,0,1-1.21,1.47,5.43,5.43,0,0,1-1.85.93A8.25,8.25,0,0,1,42.05,15.62Z"></path><path class="cls-2" d="M45.19,23.81C39.72,27.85,31.78,30,25,30A36.64,36.64,0,0,1,.22,20.57c-.51-.46-.06-1.09.56-.74A49.78,49.78,0,0,0,25.53,26.4,49.23,49.23,0,0,0,44.4,22.53C45.32,22.14,46.1,23.14,45.19,23.81Z"></path><path class="cls-2" d="M47.47,21.21c-.7-.9-4.63-.42-6.39-.21-.53.06-.62-.4-.14-.74,3.13-2.2,8.27-1.57,8.86-.83s-.16,5.89-3.09,8.35c-.45.38-.88.18-.68-.32C46.69,25.8,48.17,22.11,47.47,21.21Z"></path></svg>
+
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1657337708"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1657337708"></script>
+<script type="text/javascript">
+    
+        var baseurl = "";
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1657337708"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/1-base-infrastructure/" title="Lab Base Infrastructure" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/1-base-infrastructure/">
+          <b>1. </b>Lab Base Infrastructure
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/2-application-infrastructure/" title="Application Infrastructure" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/2-application-infrastructure/">
+          <b>2. </b>Application Infrastructure
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/3-ami-builder-pipeline/" title="AMI Builder Pipeline" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/3-ami-builder-pipeline/">
+          <b>3. </b>AMI Builder Pipeline
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/4-ssm-build-automation/" title="Build Automation with SSM" class="dd-item 
+        parent
+        active
+        
+        ">
+      <a href="/4-ssm-build-automation/">
+          <b>4. </b>Build Automation with SSM
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/5-teardown/" title="Teardown" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/5-teardown/">
+          <b>5. </b>Teardown
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="http://awsstudygroup.com"><i class='fab fa-aws'></i> AWS Study Group - Blog</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://www.facebook.com/groups/660548818043427/"><i class='fab fa-facebook'></i> AWS Study Group - FB Group</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="prefooter">
+      <hr/>
+      <ul>
+      
+        <li>
+          <a class="padding">
+            <i class="fas fa-language fa-fw"></i>
+          <div class="select-style">
+            <select id="select-language" onchange="location = this.value;">
+          
+          
+          
+              
+              
+                  
+                    
+                    
+                      <option id="en" value="/4-ssm-build-automation/" selected>English</option>
+                    
+                  
+              
+                  
+              
+          
+              
+              
+                  
+              
+                  
+                    
+                    
+                      <option id="vi" value="/vi/4-ssm-build-automation/">Tiếng Việt</option>
+                    
+                  
+              
+          
+        </select>
+        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          width="255px" height="255px" viewBox="0 0 255 255" style="enable-background:new 0 0 255 255;" xml:space="preserve">
+          <g>
+            <g id="arrow-drop-down">
+              <polygon points="0,63.75 127.5,191.25 255,63.75 		" />
+            </g>
+          </g>
+        </svg>
+        </div>
+        </a>
+        </li>
+      
+      
+      
+        <li><a class="padding" href="#" data-clear-history-toggle=""><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+      
+      </ul>
+    </section>
+    
+    <section id="footer">
+      <left>
+    
+     <b> Workshop</b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7830809&style=0038&nbdigits=9&type=page&initCount=0" title="Migrate" Alt="web counter"   border="0" /></a>  <br>
+     <b> <a href="https://cloudjourney.awsstudygroup.com/">Cloud Journey</a></b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7830807&style=0038&nbdigits=9&type=page&initCount=0" title="Total CLoud Journey" Alt="web counter"   border="0"   />
+     
+</left>
+<left>
+    <br>
+    <br>
+        <b> Last Updated </b> <br>
+        <i><font color=orange>06-07-2022</font></i>
+    </left>
+    <left>
+        <br>
+        <br>
+            <b> Team </b> <br>
+            <i> <a href="https://www.linkedin.com/in/jotaguy"  style="color:orange">Gia Hưng </a> <br>
+            <i> <a href="https://www.linkedin.com/in/binhbkitcse"  style="color:orange">Bình Nguyễn </a> <br>
+        </i>
+        </left>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            <a href='/'>Level 300: Autonomous Patching with EC2 Image Builder and System Manager</a> > Build Automation with SSM
+          
+        
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+        <div id="head-tags">
+        
+        </div>
+        
+        <div id="body-inner">
+          
+            <h1>
+              
+              Build Automation with SSM
+            </h1>
+          
+
+        
+
+
+
+	<p><strong>Deploy Build Automation with SSM</strong></p>
+<p>Sau khi đã hoàn thành <strong>Builder Pipeline</strong> ở phần trước, chúng ta sẽ tiến đến giai đoạn tự động hoá triển khai với dịch vụ System Manager. Với mục tiêu sẽ triển khai <strong>AMI</strong> mới đã hoàn thành <strong>OS Patching</strong> cho hạ tầng ứng dụng hiện tại, chúng ta sẽ sử dụng <strong>Automation Document</strong>.</p>
+<p>Với <strong>Automation Document</strong>, những hoạt động sau sẽ lần lượt được thực thi:</p>
+<ul>
+<li>Tự động thực thi <strong>Builder Pipeline</strong>.</li>
+<li>Tạo <strong>AMI</strong> mới đã hoàn thành <strong>OS Patching</strong> sau khi <strong>Builder Pipeline</strong> hoàn tất.</li>
+<li>Cập nhật <strong>CloudFormation Stack</strong> với giá trị <strong>AMI</strong> mới.</li>
+<li>Tự động kích hoạt chính sách <code>AutoScalingReplacingUpdate</code> nhằm triển khai phương pháp <strong>Blue/Green Deployment</strong> cho <strong>Auto-Scaling Group</strong>.</li>
+</ul>
+
+<div class="notices tip" ><p>Với cách tiếp cận này, chúng ta sẽ giảm thiểu tối da tổng thời gian từ khởi tạo <strong>AMI</strong> cho đến cập nhật hạ tầng ứng dụng, điều này cực kỳ hữu ích và tránh gián đoạn đến trải nghiệm người dùng.</p>
+</div>
+
+<p>Bên cạnh đó, điểm mấu chốt của quá trình tự động hoá này chính là chính sách <code>AutoScalingReplacingUpdate</code> nhằm đơn giản hoá tính phức tạp nếu triển khai phương pháp <strong>Blue/Green Deployment</strong> một cách thủ công. Để dễ dàng hình dung hơn, chúng ta sẽ xem xét quá trình sau:</p>
+<ul>
+<li>Đầu tiên, CloudFormation sẽ phát hiện có bản cập nhật mới cho <strong>LaunchConfiguration</strong> với giá trị <strong>AMI</strong> mới.</li>
+<li>CloudFormation tiến hành tạo một <strong>Auto-Scaling Group</strong> mới cùng với <strong>AMI</strong> mới đã hoàn thành <strong>OS Patching</strong>.</li>
+<li>CloudFormation tiến hành đợi cho đến khi các EC2 instances được kiểm tra bởi <strong>Load Balanacer</strong> và trả về kết quả <code>Health Check</code> là <code>Healthy</code>.
+<ul>
+<li>Khi kết quả là <code>Healthy</code>, CloudFormation tiến hành thay thế và sử dụng <strong>Auto-Scaling Group</strong> mới.</li>
+<li>Khi kết quả là <code>Un-Healthy</code>, CloudFormation tiến hành quay ngược quá trình cập nhật và giữ tài nguyên hiện tại.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Chúng ta có thể tham khảo thêm về đặc tả quá trình trên thông qua <strong>CloudFormation Template</strong> ở nội dung kế tiếp.</p>
+</blockquote>
+<p><img src="/images/5-automate-architecture.png?width=40pc" alt="5-automate-architecture"></p>
+<p><strong>Contents</strong></p>
+<ul>
+<li><a href="#cloudformation-stack">CloudFormation Stack</a></li>
+<li><a href="#aws-cli">AWS CLI</a></li>
+<li><a href="#preparing-automation-document">Preparing Automation Document</a></li>
+<li><a href="#preparing-monitoring-script">Preparing Monitoring Script</a></li>
+<li><a href="#execute-automation-document">Execute Automation Document</a></li>
+<li><a href="#review-ami-id">Review AMI ID</a></li>
+</ul>
+<h4 id="cloudformation-stack">CloudFormation Stack</h4>
+<p>Để tiến hành triển khai hạ tầng, chúng ta sẽ sử dụng dịch vụ <strong>AWS CloudFormation</strong> thông qua AWS Console hoặc AWS CLI.</p>
+<table>
+<thead>
+<tr>
+<th>Thành Phần</th>
+<th>Giá Trị (Bắt buộc)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stack Name</td>
+<td>pattern3-automate</td>
+</tr>
+<tr>
+<td>Template URL</td>
+<td><a href="https://www.wellarchitectedlabs.com/Security/300_Autonomous_Patching_With_EC2_Image_Builder_and_Systems_Manager/Code/templates/section4/pattern3-automate.yml">pattern3-automate.yml</a></td>
+</tr>
+</tbody>
+</table>
+<p>Hoặc bạn có thể tải về template bên dưới:</p>
+
+<section class="attachments ">
+	<label>
+		<i class="fas fa-paperclip" aria-hidden="true"></i>
+		Template
+	</label>
+	
+		
+	
+	<div class="attachments-files">
+	
+		
+		
+			
+				<li>
+					<a href="/4-ssm-build-automation/_index.files/pattern3-automate.yml" >
+						pattern3-automate.yml
+					</a>
+					(3 ko)
+				</li>
+			
+		
+	
+	<div>
+	
+</section>
+
+
+<h4 id="aws-cli">AWS CLI</h4>
+<p>Sau đây là các bước khởi tạo thông qua AWS CLI:</p>
+<ol>
+<li>Khởi tạo <strong>CloudFormation Stack</strong></li>
+</ol>
+<pre tabindex="0"><code>aws cloudformation create-stack --stack-name pattern3-automate --template-body file://pattern3-automate.yml --parameters  ParameterKey=ApplicationStack,ParameterValue=pattern3-app ParameterKey=ImageBuilderPipelineStack,ParameterValue=pattern3-pipeline --capabilities CAPABILITY_IAM --region ap-southeast-2
+</code></pre><p><img src="/images/5-cloudformation-create-stack.png?width=90pc" alt="cloudformation-create-stack"></p>
+<ol start="2">
+<li>Xác nhận CloudFormation Stack đã khởi tạo hoàn tất với <em>StackStatus</em> là <code>CREATE_COMPLETE</code>.</li>
+</ol>
+<pre tabindex="0"><code>aws cloudformation desribe-stacks --stack-name pattern3-automate --region ap-southeast-2
+</code></pre><ol start="3">
+<li>Ghi chú lại các giá trị tại <em>Output</em>.</li>
+</ol>
+<p><img src="/images/5-cloudformation-describe-stack.png?width=90pc" alt="cloudformation-describe-stack"></p>
+<h4 id="preparing-automation-document">Preparing Automation Document</h4>
+<hr>
+<p><strong>Steps</strong></p>
+<ol>
+<li>Truy cập vào dịch vụ <a href="https://ap-southeast-2.console.aws.amazon.com/systems-manager/home?region=ap-southeast-2">System Manager</a>.</li>
+<li>Ở thanh điều hướng bên tay trái, ở phần <em>Shared Resources</em>, chọn <strong>Documents</strong>.</li>
+</ol>
+<p><img src="/images/5-ssm-documents.png?width=90pc" alt="5-ssm-documents"></p>
+<ol start="3">
+<li>Nhấn nút <code>Create Automation</code>.</li>
+<li>Điền tên và chọn chế độ Editor để tiến hành điền đặc tả từ Console.</li>
+<li>Nhấn nút <code>Create Automation</code> để tiến hành khởi tạo.</li>
+<li>Trước khi triển khai <strong>Automation Document</strong> này, chúng ta cần phải chuẩn bị <strong>Monitoring Script</strong> ở phần kế tiếp.</li>
+</ol>
+<p><img src="/images/5-ssm-documents-create-automation-editor.png?width=90pc" alt="ssm-documents-create-automation-editor"></p>
+<p><img src="/images/5-ssm-documents-automation.png?width=90pc" alt="ssm-documents-automation"></p>
+
+<div class="notices tip" ><p>Chúng ta có thể tải về chi tiết đặc tả tại <a href="https://www.wellarchitectedlabs.com/Security/300_Autonomous_Patching_With_EC2_Image_Builder_and_Systems_Manager/Code/scripts/section4_ssm_automation_document.yml">Automation Document Script URL</a> sau.</p>
+</div>
+
+<hr>
+<p><strong>Details Definition</strong></p>
+<p>Dưới đây là chi tiết đặc tả mà chúng ta sẽ điền vào:</p>
+<ol>
+<li>Đầu tiên chúng ta sẽ xác định <code>schemaVersion</code> và định nghĩa các <code>parameters</code>.
+<ol>
+<li><code>ImageBuilderPipelineARN</code>: tham khảo <strong>Builder Pipeline</strong> mà chúng ta đã tạo ở phần trước.</li>
+<li><code>ApplicationStack</code>: tham khảo tên CloudFormation Stack mà chúng ta đã tạo ở phần trước - <code>pattern3-app</code>.</li>
+</ol>
+</li>
+<li>Kế đến là đặc tả <code>mainSteps</code>, bằng việc sử dụng các giá trị của <code>parameters</code>, chúng ta có thể tạo hành động tên là <em>ExecuteImageCreation</em> thông qua AWS API <code>aws:executeAwsApi</code>.</li>
+<li>Sau đó, chúng ta cần đợi cho đến khi <em>ExecuteImageCreation</em> hoàn tất với AWS API <code>aws:waitForAwsResourceProperty</code>.</li>
+<li>Một khi <em>ExecuteImageCreation</em> hoàn tất, chúng ta tiến hành tạo hành động tên là <em>GetBuiltImage</em> nhắm lấy được các thông tin cần thiết là <strong>AMI ID</strong> và truyền giá trị này đến bước kế tiếp.</li>
+<li>Sau khi có được <strong>AMI ID</strong>, chúng ta sẽ tạo hành động tiến hành cập nhật CloudFormation Stack tên là <em>UpdateCluster</em>.</li>
+<li>Tiến hành đợi một khi quá trình cập nhật hoàn tất với trạng thái <code>UPDATE_COMPLETE</code>.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span><span style="color:#f92672">description</span>: <span style="color:#ae81ff">CreateImage</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">schemaVersion</span>: <span style="color:#e6db74">&#39;0.3&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">parameters</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ImageBuilderPipelineARN</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">description</span>: <span style="color:#ae81ff">(Required) Corresponding EC2 Image Builder Pipeline to execute.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">String</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ApplicationStack</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">description</span>: <span style="color:#ae81ff">(Required) Corresponding Application Stack to Deploy the Image to.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">String</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">mainSteps</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ExecuteImageCreation</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">action</span>: <span style="color:#ae81ff">aws:executeAwsApi</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">maxAttempts</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">timeoutSeconds</span>: <span style="color:#ae81ff">3600</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">onFailure</span>: <span style="color:#ae81ff">Abort</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">inputs</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">Service</span>: <span style="color:#ae81ff">imagebuilder</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">Api</span>: <span style="color:#ae81ff">StartImagePipelineExecution</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">imagePipelineArn</span>: <span style="color:#e6db74">&#39;{{ ImageBuilderPipelineARN }}&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">outputs</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">Name</span>: <span style="color:#ae81ff">imageBuildVersionArn</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">Selector</span>: <span style="color:#ae81ff">$.imageBuildVersionArn</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">Type</span>: <span style="color:#ae81ff">String</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">WaitImageComplete</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">action</span>: <span style="color:#ae81ff">aws:waitForAwsResourceProperty</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">maxAttempts</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">timeoutSeconds</span>: <span style="color:#ae81ff">3600</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">onFailure</span>: <span style="color:#ae81ff">Abort</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">inputs</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">Service</span>: <span style="color:#ae81ff">imagebuilder</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">Api</span>: <span style="color:#ae81ff">GetImage</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">imageBuildVersionArn</span>: <span style="color:#e6db74">&#39;{{ ExecuteImageCreation.imageBuildVersionArn }}&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">PropertySelector</span>: <span style="color:#ae81ff">image.state.status</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">DesiredValues</span>: 
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">AVAILABLE</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">GetBuiltImage</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">action</span>: <span style="color:#ae81ff">aws:executeAwsApi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">maxAttempts</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">timeoutSeconds</span>: <span style="color:#ae81ff">3600</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">onFailure</span>: <span style="color:#ae81ff">Abort</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">inputs</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Service</span>: <span style="color:#ae81ff">imagebuilder</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Api</span>: <span style="color:#ae81ff">GetImage         </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">imageBuildVersionArn</span>: <span style="color:#e6db74">&#39;{{ ExecuteImageCreation.imageBuildVersionArn }}&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">outputs</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">Name</span>: <span style="color:#ae81ff">image</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Selector</span>: <span style="color:#ae81ff">$.image.outputResources.amis[0].image</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Type</span>: <span style="color:#ae81ff">String</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">UpdateCluster</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">action</span>: <span style="color:#ae81ff">aws:executeAwsApi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">maxAttempts</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">timeoutSeconds</span>: <span style="color:#ae81ff">3600</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">onFailure</span>: <span style="color:#ae81ff">Abort</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">inputs</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Service</span>: <span style="color:#ae81ff">cloudformation</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Api</span>: <span style="color:#ae81ff">UpdateStack</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">StackName</span>: <span style="color:#e6db74">&#39;{{ ApplicationStack }}&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">UsePreviousTemplate</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Parameters</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">ParameterKey</span>: <span style="color:#ae81ff">BaselineVpcStack</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">UsePreviousValue</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">ParameterKey</span>: <span style="color:#ae81ff">AmazonMachineImage</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">ParameterValue</span>: <span style="color:#e6db74">&#39;{{ GetBuiltImage.image }}&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Capabilities</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">CAPABILITY_IAM</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">WaitDeploymentComplete</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">action</span>: <span style="color:#ae81ff">aws:waitForAwsResourceProperty</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">maxAttempts</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">timeoutSeconds</span>: <span style="color:#ae81ff">3600</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">onFailure</span>: <span style="color:#ae81ff">Abort</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">inputs</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Service</span>: <span style="color:#ae81ff">cloudformation</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">Api</span>: <span style="color:#ae81ff">DescribeStacks</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">StackName</span>: <span style="color:#e6db74">&#39;{{ ApplicationStack }}&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">PropertySelector</span>: <span style="color:#ae81ff">Stacks[0].StackStatus</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">DesiredValues</span>: 
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">UPDATE_COMPLETE</span>
+</span></span></code></pre></div><h4 id="preparing-monitoring-script">Preparing Monitoring Script</h4>
+<p>Chúng ta tiến hành chuẩn bị một quá trình theo dõi cơ bản nhằm liên tục gửi tin nhắn đến đường dẫn URL của <strong>Application Load Balancer</strong> trước khi thực thi <strong>Automation Document</strong>. Khi đó, chúng ta có thể theo dõi hoàn toàn quá trình trước và sau khi thay đổi.</p>
+
+<div class="notices tip" ><p>Chúng ta có thể tải về <a href="https://www.wellarchitectedlabs.com/Security/300_Autonomous_Patching_With_EC2_Image_Builder_and_Systems_Manager/Code/scripts/watchscript.sh">Monitoring Script URL</a> sau.</p>
+</div>
+
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./watchscript.sh http://&lt;ALB_DNS_URL&gt;
+</span></span></code></pre></div><p><img src="/images/5-monitoring-script.png?width=90pc" alt="monitoring-script"></p>
+<p>Đoạn mã sẽ liên tục gửi và lấy kết quả trả về cùng với <code>StatusCode</code>.</p>
+<h4 id="execute-automation-document">Execute Automation Document</h4>
+<ol>
+<li>Một khi <strong>Monitoring Script</strong> được chuẩn bị, chúng ta tiến hành thực thi <strong>Automation Document</strong>.</li>
+</ol>
+<pre tabindex="0"><code>aws ssm start-automation-execution --document-name &lt;SSM_DOCUMENT_AUTOMATION_NAME&gt; --parameters &#34;ApplicationStack=pattern3-app,ImageBuilderPipeline=&lt;BUILDER_PIPELINE_ARN&gt;&#34; --region ap-southeast-2
+</code></pre><p><img src="/images/5-ssm-cli-execute-document.png?width=50pc" alt="ssm-cli-execute-document"></p>
+<ol start="2">
+<li>Kiểm tra trạng thái của <strong>Automation Document</strong>.</li>
+</ol>
+<pre tabindex="0"><code>aws ssm describe-automation-executions --filter &#34;Key=ExecutionId,Values=&lt;EXECUTION_ID&gt;&#34; --region ap-southeast-2
+</code></pre><p><img src="/images/5-ssm-cli-describe-automation.png?width=50pc" alt="ssm-cli-describe-automation"></p>
+<p><img src="/images/5-ssm-automation-executions.png?width=90pc" alt="ssm-automation-executions"></p>
+<p>Từ AWS Console, chúng ta có thể theo dõi từng bước và trạng thái:</p>
+<p><img src="/images/5-ssm-automation-document-execution-detail.png?width=90pc" alt="ssm-automation-document-execution-detail"></p>
+<h4 id="review-ami-id">Review AMI ID</h4>
+<p>Chúng ta sẽ tiến hành xác minh <strong>AMI ID</strong> mới liệu đã được cập nhật hay chưa bằng cách truy cập vào đường dẫn <strong>DNS URL</strong> của <strong>Application Load Balancer</strong>.</p>
+<p><img src="/images/5-ami-id-verification.png?width=90pc" alt="ami-id-verification"></p>
+<p>Tại bước <code>Step 1: ExecuteImageCreation</code>, ở phần <em>Outputs</em>, chúng ta lấy thông tin của <strong>Pipeline Execution ARN</strong>.
+<img src="/images/5-ssm-automation-execution-detail-step1.png?width=90pc" alt="ssm-automation-execution-detail-step1"></p>
+<p>Sau đó, chúng ta có thể đối chiếu với giá trị ở dịch vụ <strong>EC2 Image Builder</strong>.
+<img src="/images/5-ec2-image-builder-pipeline-execution-output.png?width=90pc" alt="ec2-image-builder-pipeline-execution-output"></p>
+
+
+
+
+
+<footer class=" footline" >
+	
+</footer>
+
+        
+        </div> 
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
+
+
+	 
+	 
+		
+			<a class="nav nav-prev" href="/3-ami-builder-pipeline/" title="AMI Builder Pipeline"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/5-teardown/" title="Teardown" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
+    </div>
+
+    </section>
+    
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js?1657337708"></script>
+    <script src="/js/perfect-scrollbar.min.js?1657337708"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1657337708"></script>
+    <script src="/js/jquery.sticky.js?1657337708"></script>
+    <script src="/js/featherlight.min.js?1657337708"></script>
+    <script src="/js/highlight.pack.js?1657337708"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom-3.6.0.js?1657337708"></script>
+    <script src="/js/learn.js?1657337708"></script>
+    <script src="/js/hugo-learn.js?1657337708"></script>
+
+    <link href="/mermaid/mermaid.css?1657337708" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1657337708"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-158079754-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>

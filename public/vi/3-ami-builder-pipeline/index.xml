@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AMI Builder Pipeline on Cấp độ 300: Chủ động Cài đặt Bản vá với EC2 Image Builder và System Manager</title>
+    <link>/vi/3-ami-builder-pipeline/</link>
+    <description>Recent content in AMI Builder Pipeline on Cấp độ 300: Chủ động Cài đặt Bản vá với EC2 Image Builder và System Manager</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Thu, 14 May 2020 00:38:32 +0700</lastBuildDate><atom:link href="/vi/3-ami-builder-pipeline/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

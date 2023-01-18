@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="vi" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.99.1" />
+    <meta name="description" content="">
+<meta name="author" content="journeyoftheaverageguy@gmail.com">
+
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
+    <title>AMI Builder Pipeline :: Cấp độ 300: Chủ động Cài đặt Bản vá với EC2 Image Builder và System Manager</title>
+
+    
+    <link href="/css/nucleus.css?1674071269" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1674071269" rel="stylesheet">
+    <link href="/css/hybrid.css?1674071269" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1674071269" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1674071269" rel="stylesheet">
+    <link href="/css/auto-complete.css?1674071269" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1674071269" rel="stylesheet">
+    <link href="/css/theme.css?1674071269" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1674071269" rel="stylesheet">
+    
+    <link href="/css/theme-workshop.css?1674071269" rel="stylesheet">
+    
+    
+
+    <script src="/js/jquery-3.3.1.min.js?1674071269"></script>
+
+    <style>
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+  </head>
+  <body class="" data-url="/vi/4-ami-builder-pipeline/">
+    <nav id="sidebar" class="showVisitedLinks">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <a id="logo" href="/">
+
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" width="30%"><defs><style>.cls-1{fill:#fff;}.cls-2{fill:#f90;fill-rule:evenodd;}</style></defs><title>AWS-Logo_White-Color</title><path class="cls-1" d="M14.09,10.85a4.7,4.7,0,0,0,.19,1.48,7.73,7.73,0,0,0,.54,1.19.77.77,0,0,1,.12.38.64.64,0,0,1-.32.49l-1,.7a.83.83,0,0,1-.44.15.69.69,0,0,1-.49-.23,3.8,3.8,0,0,1-.6-.77q-.25-.42-.51-1a6.14,6.14,0,0,1-4.89,2.3,4.54,4.54,0,0,1-3.32-1.19,4.27,4.27,0,0,1-1.22-3.2A4.28,4.28,0,0,1,3.61,7.75,6.06,6.06,0,0,1,7.69,6.46a12.47,12.47,0,0,1,1.76.13q.92.13,1.91.36V5.73a3.65,3.65,0,0,0-.79-2.66A3.81,3.81,0,0,0,7.86,2.3a7.71,7.71,0,0,0-1.79.22,12.78,12.78,0,0,0-1.79.57,4.55,4.55,0,0,1-.58.22l-.26,0q-.35,0-.35-.52V2a1.09,1.09,0,0,1,.12-.58,1.2,1.2,0,0,1,.47-.35A10.88,10.88,0,0,1,5.77.32,10.19,10.19,0,0,1,8.36,0a6,6,0,0,1,4.35,1.35,5.49,5.49,0,0,1,1.38,4.09ZM7.34,13.38a5.36,5.36,0,0,0,1.72-.31A3.63,3.63,0,0,0,10.63,12,2.62,2.62,0,0,0,11.19,11a5.63,5.63,0,0,0,.16-1.44v-.7a14.35,14.35,0,0,0-1.53-.28,12.37,12.37,0,0,0-1.56-.1,3.84,3.84,0,0,0-2.47.67A2.34,2.34,0,0,0,5,11a2.35,2.35,0,0,0,.61,1.76A2.4,2.4,0,0,0,7.34,13.38Zm13.35,1.8a1,1,0,0,1-.64-.16,1.3,1.3,0,0,1-.35-.65L15.81,1.51a3,3,0,0,1-.15-.67.36.36,0,0,1,.41-.41H17.7a1,1,0,0,1,.65.16,1.4,1.4,0,0,1,.33.65l2.79,11,2.59-11A1.17,1.17,0,0,1,24.39.6a1.1,1.1,0,0,1,.67-.16H26.4a1.1,1.1,0,0,1,.67.16,1.17,1.17,0,0,1,.32.65L30,12.39,32.88,1.25A1.39,1.39,0,0,1,33.22.6a1,1,0,0,1,.65-.16h1.54a.36.36,0,0,1,.41.41,1.36,1.36,0,0,1,0,.26,3.64,3.64,0,0,1-.12.41l-4,12.86a1.3,1.3,0,0,1-.35.65,1,1,0,0,1-.64.16H29.25a1,1,0,0,1-.67-.17,1.26,1.26,0,0,1-.32-.67L25.67,3.64,23.11,14.34a1.26,1.26,0,0,1-.32.67,1,1,0,0,1-.67.17Zm21.36.44a11.28,11.28,0,0,1-2.56-.29,7.44,7.44,0,0,1-1.92-.67,1,1,0,0,1-.61-.93v-.84q0-.52.38-.52a.9.9,0,0,1,.31.06l.42.17a8.77,8.77,0,0,0,1.83.58,9.78,9.78,0,0,0,2,.2,4.48,4.48,0,0,0,2.43-.55,1.76,1.76,0,0,0,.86-1.57,1.61,1.61,0,0,0-.45-1.16A4.29,4.29,0,0,0,43,9.22l-2.41-.76A5.15,5.15,0,0,1,38,6.78a3.94,3.94,0,0,1-.83-2.41,3.7,3.7,0,0,1,.45-1.85,4.47,4.47,0,0,1,1.19-1.37A5.27,5.27,0,0,1,40.51.29,7.4,7.4,0,0,1,42.6,0a8.87,8.87,0,0,1,1.12.07q.57.07,1.08.19t.95.26a4.27,4.27,0,0,1,.7.29,1.59,1.59,0,0,1,.49.41.94.94,0,0,1,.15.55v.79q0,.52-.38.52a1.76,1.76,0,0,1-.64-.2,7.74,7.74,0,0,0-3.2-.64,4.37,4.37,0,0,0-2.21.47,1.6,1.6,0,0,0-.79,1.48,1.58,1.58,0,0,0,.49,1.18,4.94,4.94,0,0,0,1.83.92L44.55,7a5.08,5.08,0,0,1,2.57,1.6A3.76,3.76,0,0,1,47.9,11a4.21,4.21,0,0,1-.44,1.93,4.4,4.4,0,0,1-1.21,1.47,5.43,5.43,0,0,1-1.85.93A8.25,8.25,0,0,1,42.05,15.62Z"></path><path class="cls-2" d="M45.19,23.81C39.72,27.85,31.78,30,25,30A36.64,36.64,0,0,1,.22,20.57c-.51-.46-.06-1.09.56-.74A49.78,49.78,0,0,0,25.53,26.4,49.23,49.23,0,0,0,44.4,22.53C45.32,22.14,46.1,23.14,45.19,23.81Z"></path><path class="cls-2" d="M47.47,21.21c-.7-.9-4.63-.42-6.39-.21-.53.06-.62-.4-.14-.74,3.13-2.2,8.27-1.57,8.86-.83s-.16,5.89-3.09,8.35c-.45.38-.88.18-.68-.32C46.69,25.8,48.17,22.11,47.47,21.21Z"></path></svg>
+
+</a>
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1674071269"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1674071269"></script>
+<script type="text/javascript">
+    
+        var baseurl = "\/vi";
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1674071269"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/vi/1-intro/" title="Giới thiệu" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/vi/1-intro/">
+           <b> 1. </b> Giới thiệu
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/vi/2-base-infrastructure/" title="Hạ tầng Cơ bản" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/vi/2-base-infrastructure/">
+           <b> 2. </b> Hạ tầng Cơ bản
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/vi/3-application-infrastructure/" title="Hạ tầng Ứng dụng" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/vi/3-application-infrastructure/">
+           <b> 3. </b> Hạ tầng Ứng dụng
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/vi/4-ami-builder-pipeline/" title="AMI Builder Pipeline" class="dd-item 
+        parent
+        active
+        
+        ">
+      <a href="/vi/4-ami-builder-pipeline/">
+           <b> 4. </b> AMI Builder Pipeline
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/vi/5-ssm-build-automation/" title="Tự động hóa với SSM" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/vi/5-ssm-build-automation/">
+           <b> 5. </b> Tự động hóa với SSM
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+
+
+ 
+  
+    
+    <li data-nav-id="/vi/6-cleanup/" title="Dọn dẹp tài nguyên" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/vi/6-cleanup/">
+           <b> 6. </b> Dọn dẹp tài nguyên
+          
+            <i class="fas fa-check read-icon"></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="http://awsstudygroup.com"><i class='fab fa-aws'></i> AWS Study Group - Blog</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://www.facebook.com/groups/660548818043427/"><i class='fab fa-facebook'></i> AWS Study Group - Nhóm FB</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="prefooter">
+      <hr/>
+      <ul>
+      
+        <li>
+          <a class="padding">
+            <i class="fas fa-language fa-fw"></i>
+          <div class="select-style">
+            <select id="select-language" onchange="location = this.value;">
+          
+          
+          
+              
+              
+                  
+                    
+                    
+                      <option id="en" value="/4-ami-builder-pipeline/">English</option>
+                    
+                  
+              
+                  
+              
+          
+              
+              
+                  
+              
+                  
+                    
+                    
+                      <option id="vi" value="/vi/4-ami-builder-pipeline/" selected>Tiếng Việt</option>
+                    
+                  
+              
+          
+        </select>
+        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          width="255px" height="255px" viewBox="0 0 255 255" style="enable-background:new 0 0 255 255;" xml:space="preserve">
+          <g>
+            <g id="arrow-drop-down">
+              <polygon points="0,63.75 127.5,191.25 255,63.75 		" />
+            </g>
+          </g>
+        </svg>
+        </div>
+        </a>
+        </li>
+      
+      
+      
+        <li><a class="padding" href="#" data-clear-history-toggle=""><i class="fas fa-history fa-fw"></i> Clear History</a></li>
+      
+      </ul>
+    </section>
+    
+    <section id="footer">
+      <left>
+    
+     <b> Workshop</b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=8147756&style=0038&nbdigits=9&type=page&initCount=0" title="Migrate" Alt="web counter"   border="0" /></a>  <br>
+     <b> <a href="https://cloudjourney.awsstudygroup.com/">Cloud Journey</a></b> <br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7830807&style=0038&nbdigits=9&type=page&initCount=0" title="Total CLoud Journey" Alt="web counter"   border="0"   />
+     
+</left>
+<left>
+    <br>
+    <br>
+        <b> Last Updated </b> <br>
+        <i><font color=orange>19-01-2023</font></i>
+    </left>
+    <left>
+        <br>
+        <br>
+            <b> Team </b> <br>
+            <i> <a href="https://www.linkedin.com/in/jotaguy"  style="color:orange">Gia Hưng </a> <br>
+            <i> <a href="https://www.linkedin.com/in/binhbkitcse"  style="color:orange">Bình Nguyễn </a> <br>
+        </i>
+        </left>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            <a href='/vi/'>Chủ động Cài đặt Bản vá với EC2 Image Builder và System Manager</a> > AMI Builder Pipeline
+          
+        
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+        <div id="head-tags">
+        
+        </div>
+        
+        <div id="body-inner">
+          
+            <h1>
+              
+              AMI Builder Pipeline
+            </h1>
+          
+
+        
+
+
+
+	<p><strong>Triển khai AMI Builder Pipeline</strong></p>
+<p>Ở phần này, chúng ta sẽ tiến hành xây dựng một <strong>AMI Pipeline</strong> thông qua <strong>EC2 Image Builder</strong>.</p>
+<p><strong>EC2 Image Build</strong> là một dịch vụ giúp chúng ta đơn giản hoá các tác vụ từ khởi tạo, bảo trì, đánh giá và phát triển các <strong>Linux/Windows Images</strong>.</p>
+<ul>
+<li>Có thể sử dụng cho dịch vụ <em>EC2</em> cũng như môi trường <em>on-premises</em>.</li>
+<li>Giảm thiểu thời gian thực hiện các tác vụ cần thiết.</li>
+</ul>
+<p><img src="/images/4-ami-pipeline-architecture.png?featherlight=false&amp;width=60pc" alt="ami-pipeline-architecture"></p>
+<p>Sau khi hoàn thành phần này, chúng ta sẽ có thể</p>
+<ul>
+<li>Tự xây dựng được một <strong>AMI Pipeline</strong>.</li>
+<li>Tự tạo ra các <strong>AMI</strong> mới chứa các bản vá lỗi mới nhất.</li>
+<li>Sẵn sàng thay thế các <strong>AMI</strong> cũ và triển khai cho môi trường ứng dụng hiện tại.</li>
+</ul>
+<p><strong>Nội dung</strong></p>
+<ul>
+<li><a href="#cloudformation-stack">CloudFormation Stack</a></li>
+<li><a href="#aws-cli">AWS CLI</a></li>
+<li><a href="#ami-pipeline">AMI Pipeline</a></li>
+<li><a href="#t%E1%BA%A1o-s3-bucket">Tạo S3 Bucket</a></li>
+<li><a href="#t%E1%BA%A1o-iam-role">Tạo IAM Role</a></li>
+<li><a href="#t%E1%BA%A1o-security-group">Tạo Security Group</a></li>
+<li><a href="#t%E1%BA%A1o-m%E1%BB%99t-builder-component">Tạo một Builder Component</a></li>
+<li><a href="#t%E1%BA%A1o-m%E1%BB%99t-builder-recipe">Tạo một Builder Recipe</a></li>
+<li><a href="#t%E1%BA%A1o-m%E1%BB%99t-builder-pipeline">Tạo một Builder Pipeline</a></li>
+<li><a href="#th%E1%BB%B1c-thi-builder-pipeline">Thực thi Builder Pipeline</a></li>
+</ul>
+<h4 id="cloudformation-stack">CloudFormation Stack</h4>
+<p>Để tiến hành triển khai hạ tầng, chúng ta sẽ sử dụng dịch vụ <strong>AWS CloudFormation</strong> thông qua AWS Console hoặc AWS CLI.</p>
+<table>
+<thead>
+<tr>
+<th>Thành Phần</th>
+<th>Giá Trị (Bắt buộc)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stack Name</td>
+<td>pattern3-pipeline</td>
+</tr>
+<tr>
+<td>Template URL</td>
+<td><a href="https://www.wellarchitectedlabs.com/Security/300_Autonomous_Patching_With_EC2_Image_Builder_and_Systems_Manager/Code/templates/section3/pattern3-pipeline.yml">pattern3-pipeline.yml</a></td>
+</tr>
+</tbody>
+</table>
+<p>Hoặc bạn có thể tải về template bên dưới:</p>
+
+<section class="attachments ">
+	<label>
+		<i class="fas fa-paperclip" aria-hidden="true"></i>
+		Template
+	</label>
+	
+		
+	
+	<div class="attachments-files">
+	
+		
+		
+			
+				<li>
+					<a href="/4-ami-builder-pipeline/_index.vi.files/pattern3-pipeline.yml" >
+						pattern3-pipeline.yml
+					</a>
+					(4 ko)
+				</li>
+			
+		
+	
+	<div>
+	
+</section>
+
+
+<h4 id="aws-cli">AWS CLI</h4>
+<p>Sau đây là các bước khởi tạo thông qua AWS CLI:</p>
+<ol>
+<li>Khởi tạo CloudFormation Stack
+<pre tabindex="0"><code>aws cloudformation create-stack --stack-name pattern3-pipeline --template-body file://pattern3-pipeline.yml --parameters  ParameterKey=MasterAMI,ParameterValue=ami-0f96495a064477ffb ParameterKey=BaselineVpcStack,ParameterValue=pattern3-base --capabilities CAPABILITY_IAM --region ap-southeast-2
+</code></pre></li>
+</ol>
+<p><img src="/images/4-cloudformation-cli-create-stack.png?featherlight=false&amp;width=90pc" alt="cloudformation-cli-create-stack"></p>
+<ol start="2">
+<li>
+<p>Xác nhận CloudFormation Stack đã khởi tạo hoàn tất với <em>StackStatus</em> là <code>CREATE_COMPLETE</code>.</p>
+<pre tabindex="0"><code>aws cloudformation describe-stacks --stack-name pattern3-pipeline --region ap-southeast-2
+</code></pre></li>
+<li>
+<p>Ghi chú lại các giá trị tại <em>Output</em>.</p>
+</li>
+</ol>
+<p><img src="/images/4-cloudformation-describe-stack.png?featherlight=false&amp;width=90pc" alt="cloudformation-describe-stack"></p>
+
+<div class="notices tip" ><p>Bài thực hành dựa trên <em>Golden AMI ID</em> của <strong>Amazon Linux 2 AMI (HVM)</strong> tại AWS Region <code>ap-southeast-2</code>, nếu bạn muốn sử dụng AWS Region khác, giá trị <em>Golden AMI ID</em> cần được thay thế một cách tương ứng.</p>
+</div>
+
+<h4 id="ami-pipeline">AMI Pipeline</h4>
+<p>Bây giờ chúng ta sẽ tập trung vào xây dựng phần chính yếu của một <strong>AMI Pipeline</strong>. Chúng ta sẽ lần lượt thực hiện các bước sau đây:</p>
+<ol>
+<li>Tạo một S3 bucket cho tác vụ logging.</li>
+<li>Tạo một IAM Role dành cho <strong>EC2 Image Builder</strong>.</li>
+<li>Tạo một <strong>Image Builder Component</strong>.</li>
+<li>Tạo một <strong>Image Builder Recipe</strong>.</li>
+<li>Tạo một <strong>Image Builder Pipeline</strong>.</li>
+</ol>
+<h4 id="tạo-s3-bucket">Tạo S3 Bucket</h4>
+<p>Bởi tính chất của dịch vụ S3, khi đặt tên cho S3 Bucket, chúng ta cần phải tuân theo một số quy tắc được đặc tả tại <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html">URL</a> sau.</p>
+<ol>
+<li>Tạo ra một chuỗi UUID đặc thù với kí tự in thường.
+<pre tabindex="0"><code>uuidgen | awk -F- &#39;{print tolower($1$2$3)}&#39;
+</code></pre></li>
+</ol>
+<p><img src="/images/4-s3-uuid.png?featherlight=false&amp;width=90pc" alt="s3-uuid"></p>
+<ol start="2">
+<li>Tạo ra một S3 Bucket với tên gọi là tổ hợp giữa chuỗi <code>pattern3-logging</code> và chuỗi UUID trên.
+<pre tabindex="0"><code>aws s3 mb s3://pattern3-logging-&lt;UUID_STRING&gt; --region ap-southeast-2
+</code></pre></li>
+</ol>
+<p><img src="/images/4-s3-create.png?featherlight=false&amp;width=90pc" alt="s3-create"></p>
+
+<div class="notices tip" ><p>Chúng ta có thể xem tại <a href="https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html">URL</a> sau về chi tiết việc khởi tạo S3 bucket.</p>
+</div>
+
+<h4 id="tạo-iam-role">Tạo IAM Role</h4>
+<p>IAM Role này sẽ được sử dụng cho <strong>EC2 Image Builder</strong> với vai trò là một <em>instance profile</em> cho một EC2 instance được khởi tạo tạm thời. EC2 instance này sẽ thực hiện tác vụ <strong>OS Patching</strong>.</p>
+<p>Sau đây là quá trình tạo ra một <strong>IAM Role</strong>:</p>
+<ol>
+<li>Đăng nhập vào AWS Console và truy cập đến dịch vụ IAM theo đường dẫn - <a href="https://console.aws.amazon.com/iam/">https://console.aws.amazon.com/iam/</a>.</li>
+<li>Ở thanh điều hướng bên tay trái, chọn <code>Roles</code> và nhấn nút <code>Create role</code>.</li>
+</ol>
+<p><img src="/images/4-iam-roles.png?featherlight=false&amp;width=90pc" alt="iam-roles"></p>
+<ol start="3">
+<li>Ở màn hình tạo mới, chúng ta chọn <code>AWS service</code> và chọn <strong>usecase</strong> là <code>EC2</code>.</li>
+</ol>
+<p><img src="/images/4-iam-create-role.png?featherlight=false&amp;width=90pc" alt="iam-create-role"></p>
+<ol start="4">
+<li>Ở khu vực <code>Attach permissions policies</code>, chúng ta sẽ lần lượt chọn các chính sách dưới đây:
+<ol>
+<li><strong>EC2InstanceProfileForImageBuilder</strong></li>
+<li><strong>AmazonSSMManagedInstanceCore</strong></li>
+</ol>
+</li>
+<li>Chọn lần lượt <code>Next: Tags</code> và <code>Next: Review</code> để tiến hành xem xét.</li>
+<li>Điền tên <code>pattern3-recipe-instance-role</code> cùng với miêu tả cụ thể.</li>
+</ol>
+<p><img src="/images/4-iam-create-role-review.png?featherlight=false&amp;width=90pc" alt="iam-create-role-review"></p>
+<ol start="7">
+<li>Tiến hành tạo bằng cách nhấn <code>Create role</code>.</li>
+<li>Sau khi tạo thành công, trong danh sách các IAM roles, chúng ta chọn <code>pattern3-recipe-instance-role</code>.</li>
+<li>Tiến hành thêm một chính sách mới, nhấn chọn <code>Add inline policy</code>.</li>
+</ol>
+<p><img src="/images/4-iam-role-add-inline-policy.png?featherlight=false&amp;width=90pc" alt="iam-role-add-inline-policy"></p>
+<ol start="10">
+<li>Tại phần <strong>JSON</strong>, chúng ta sẽ sử dụng đặc tả sau. Thay thế <code>&lt;S3_BUCKET_NAME&gt;</code> với tên S3 Bucket ở bước trước.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;Statement&#34;</span>: [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Action&#34;</span>: <span style="color:#e6db74">&#34;s3:*&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Resource&#34;</span>: [
+</span></span><span style="display:flex;"><span>               <span style="color:#e6db74">&#34;arn:aws:s3:::&lt;S3_BUCKET_NAME&gt;/*&#34;</span>               
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>   ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="/images/4-iam-policy-editor.png?featherlight=false&amp;width=90pc" alt="iam-policy-editor"></p>
+<ol start="11">
+<li>Nhấn chọn <code>Review Policy</code>.</li>
+<li>Điền tên và tiến hành khởi tạo, nhấn chọn <code>Create Policy</code>.</li>
+</ol>
+<p><img src="/images/4-iam-role-inline-policy-summary.png?featherlight=false&amp;width=90pc" alt="iam-role-inline-policy-summary"></p>
+<h4 id="tạo-security-group">Tạo Security Group</h4>
+<p>Chúng ta sẽ cần một EC2 Security Group cho EC2 instance tạm thời. Security Group sẽ không cần bất kỳ một <em>Inbound Rule</em> nào, tuy nhiên chúng ta cần đảm bảo <em>Outbound Rule</em> là mặc định mà có thể truy câp Internet.</p>
+<ol>
+<li>Truy cập vào dịch vụ Amazon EC2.</li>
+<li>Ở thanh điều hướng bên tay trái, chọn <strong>Security Group</strong>.</li>
+</ol>
+<p><img src="/images/4-ec2-security-groups.png?featherlight=false&amp;width=90pc" alt="ec2-security-groups"></p>
+<ol start="3">
+<li>Nhấn chọn <code>Create security group</code>.</li>
+<li>Ở phần thông tin cơ bản, chúng ta điền lần lượt tên <code>pattern3-pipeline-instance-security-group</code> và miêu tả.</li>
+<li>Ở phần VPC, chúng ta sẽ chọn VPC tương ứng.</li>
+<li>Đối với <em>Inbound Rule</em> và <em>Outbound Rule</em>, chúng ta sẽ giữ mặc định và không thêm bất kỳ giá trị nào.</li>
+<li>Nhấn <code>Create</code> để khởi tạo.</li>
+</ol>
+<p><img src="/images/4-ec2-create-security-group.png?featherlight=false&amp;width=90pc" alt="ec2-create-security-group"></p>
+<h4 id="tạo-một-builder-component">Tạo một Builder Component</h4>
+<p>Chúng ta sẽ tiến hành tạo một <strong>Component</strong> của dịch vụ <strong>EC2 Image Builder</strong>.</p>
+<ol>
+<li>Truy cập vào dịch vụ <a href="https://ap-southeast-2.console.aws.amazon.com/imagebuilder/home?region=ap-southeast-2">EC2 Image Builder</a>.</li>
+<li>Tại thanh điều hướng bên tay trái, chọn <strong>Components</strong>.</li>
+<li>Nhấn nút <code>Create Component</code>.</li>
+<li>Tiến hành chọn các giá trị như sau:
+<ol>
+<li>Version: <code>1.0.0</code>.</li>
+<li>Platform: <code>Linux</code>.</li>
+<li>Compatible OS versions: <code>Amazon Linux 2</code>.</li>
+<li>Component Name: <code>pattern3-pipeline-ConfigureOSComponent</code>.</li>
+<li>Description: <code>Component to update the OS with latest package versions</code>.</li>
+</ol>
+</li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-create-component-details.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-create-component-details"></p>
+<ol start="5">
+<li>Nhấn nút <code>Define document content</code>.</li>
+<li>Sao chép và điền đặc tả sau:
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">ConfigureOS</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">schemaVersion</span>: <span style="color:#ae81ff">1.0</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">phases</span>:
+</span></span><span style="display:flex;"><span> - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">build</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>     - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">UpdateOS</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#f92672">action</span>: <span style="color:#ae81ff">UpdateOS</span>
+</span></span></code></pre></div></li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-create-component-definition-document.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-create-component-definition-document"></p>
+<ol start="7">
+<li>Nhấn nút <code>Create Component</code> để tiến hành khởi tạo.</li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-components.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-components"></p>
+
+<div class="notices note" ><p>Ở phần thực hành này, chúng ta chỉ đơn giản đặc tả với hành động <code>UpdateOS</code> nhằm cập nhật các phần mềm hiện tại. Chúng ta có thể tham khảo thêm các hành động khác tại <a href="https://docs.aws.amazon.com/imagebuilder/latest/userguide/image-builder-application-documents.html#document-example">URL</a> sau.</p>
+</div>
+
+<h4 id="tạo-một-builder-recipe">Tạo một Builder Recipe</h4>
+<p>Trước khi đặc tả <strong>Builder Pipeline</strong>, chúng ta cần phải có một <strong>Builder Recipe</strong>.</p>
+<ol>
+<li>Truy cập vào dịch vụ <a href="https://ap-southeast-2.console.aws.amazon.com/imagebuilder/home?region=ap-southeast-2">EC2 Image Builder</a>.</li>
+<li>Tại thanh điều hướng bên tay trái, chọn <strong>Image recipes</strong>.</li>
+<li>Nhấn nút <code>Create Recipe</code>.</li>
+<li>Ở phần <em>Recipe details</em>, điền các giá trị như sau:
+<ol>
+<li>Name: <code>pattern3-pipeline-ImageRecipe</code>.</li>
+<li>Version: <code>1.0.0</code>.</li>
+<li>Description: <code>Pattern3 Configure OS Recipepackage versions</code>.</li>
+</ol>
+</li>
+<li>Ở phần <em>Source Image</em>, chọn <code>Enter custom AMI ID</code> và diền giá trị <code>ami-0f96495a064477ffb</code>.</li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-create-image-recipe-source-image.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-create-image-recipe-source-image"></p>
+<ol start="6">
+<li>Ở phần <em>Build Components</em>, chọn <strong>Component</strong> ở bước trước, ngoài ra chúng ta có thể tìm kiếm với bộ lọc <code>Owned by me</code>.</li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-create-image-recipe-components.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-create-image-recipe-components"></p>
+<ol start="7">
+<li>Nhấn nút <code>Create Recipe</code> để tiến hành khởi tạo.</li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-image-recipes.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-image-recipes"></p>
+<h4 id="tạo-một-builder-pipeline">Tạo một Builder Pipeline</h4>
+<ol>
+<li>Truy cập vào dịch vụ <a href="https://ap-southeast-2.console.aws.amazon.com/imagebuilder/home?region=ap-southeast-2">EC2 Image Builder</a>.</li>
+<li>Tại thanh điều hướng bên tay trái, chọn <strong>Image recipes</strong>.</li>
+<li>Nhấn chọn <code>pattern3-pipeline-ImageRecipe</code> và nhấn nút <code>Create pipeline from this recipe</code>.</li>
+</ol>
+<p><img src="/iamges/../images/4-ec2-image-builder-image-recipes-actions.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-image-recipes-actions"></p>
+<ol start="4">
+<li>Ở phần <em>Specify pipeline details</em>, điền các thông tin sau:
+<ol>
+<li>Name: <code>pattern3-pipeline-ImagePipeline</code>.</li>
+<li>Description: <code>Pattern 3 pipeline to update OS</code>.</li>
+<li>Role: Chọn IAM Role mà chúng ta đã khởi tạo ở bước trước.</li>
+</ol>
+</li>
+</ol>
+<p><img src="/iamges/../images/4-ec2-image-builder-create-pipeline-details.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-create-pipeline-details"></p>
+<ol start="5">
+<li>Ở phần <em>Choose recipe</em>, nhấn nút <code>Next</code>.</li>
+<li>Ở phần <em>Infrastructure Settings</em>, chọn <code>Create a new infrastructure configuration</code>.</li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-create-pipeline-define-infra-config.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-create-pipeline-define-infra-config"></p>
+<ol start="7">
+<li>Điền các thông tin sau:
+<ol>
+<li><strong>IAM Role</strong>: Dựa vào <strong>EC2 Instance Profile</strong> đã tạo trước đó.</li>
+<li><strong>VPC/Subnet</strong>: Dựa vào <em>Output</em> của <code>pattern3-base</code>, chọn VPC và Private Subnet tương ứng.</li>
+<li><strong>Security Group</strong>: Dựa vào <strong>Security Group ID</strong> đã tạo trước đó.</li>
+<li><strong>Instance Type</strong>: <code>m5.large</code> hoặc nhỏ hơn có thể.</li>
+<li><strong>S3 Bucket</strong>: chọn S3 bucket đã tạo trước đó.</li>
+</ol>
+</li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-create-pipeline-define-infra-config-iam-type.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-create-pipeline-define-infra-config-iam-type"></p>
+<p><img src="/images/4-ec2-image-builder-create-pipeline-define-infra-config-vpc-s3.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-create-pipeline-define-infra-config-vpc-s3"></p>
+<ol start="8">
+<li>Ở phần <em>Define distribution settings</em>, Nhấn nút <code>Next</code>.</li>
+<li>Nhấn nút <code>Review</code>.</li>
+<li>Nhấn nút <code>Create Pipeline</code> để khởi tạo.</li>
+</ol>
+
+<div class="notices note" ><p>Với <code>m5.large</code> có thể sẽ mất khoảng 20 đến 30 phút để khởi tạo, chúng ta có thể dùng loại nhỏ hơn để tiết kiệm chi phí nhưng thời gian khởi tạo sẽ lâu hơn.</p>
+</div>
+
+<p><img src="/images/4-ec2-image-builder-image-pipelines.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-image-pipelines"></p>
+<h4 id="thực-thi-builder-pipeline">Thực thi Builder Pipeline</h4>
+<p>Sau khi quá trình đặc tả đã hoàn tất, chúng ta tiến hành thử nghiệm <strong>Builder Pipeline</strong>.</p>
+<p><img src="/images/4-ec2-image-builder-image-pipelines-actions.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-image-pipelines-actions"></p>
+<ol>
+<li>Nhấn nút <code>Actions</code> và chọn <code>Create pipeline from this recipe</code>.</li>
+<li>Một khi thực thi hoàn tất, chúng ta sẽ kiểm tra liệu <strong>AMI</strong> mới có được khởi tạo hay không.</li>
+</ol>
+<p><img src="/images/4-ec2-image-builder-pipeline-result.png?featherlight=false&amp;width=90pc" alt="ec2-image-builder-pipeline-result"></p>
+
+<div class="notices note" ><p><strong>EC2 Image Builder</strong> sử dụng <strong>Automation Document</strong> của dịch vụ System Manager để hoàn thành quá trình khởi tạo, chúng ta có thể truy cập vào dịch System Manager để theo dõi quá trình này cũng như kiểm tra trạng thái - <code>ImageBuilderBuildImageDocument</code>.</p>
+</div>
+
+
+<div class="notices tip" ><p>Tham khảo thêm về quá trình kiểm tra <strong>Automation Document</strong> tại <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-working.html">Automation Working URL</a> sau.</p>
+</div>
+
+<p>Bây giờ, chúng ta sẽ sang phần kế tiếp với việc triển khai quá trình <strong>Build Automation</strong> với dịch vụ System Manager.</p>
+
+
+
+
+
+<footer class=" footline" >
+	
+</footer>
+
+        
+        </div> 
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
+
+
+	 
+	 
+		
+			<a class="nav nav-prev" href="/vi/3-application-infrastructure/" title="Hạ tầng Ứng dụng"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/vi/5-ssm-build-automation/" title="Tự động hóa với SSM" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
+    </div>
+
+    </section>
+    
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js?1674071269"></script>
+    <script src="/js/perfect-scrollbar.min.js?1674071269"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1674071269"></script>
+    <script src="/js/jquery.sticky.js?1674071269"></script>
+    <script src="/js/featherlight.min.js?1674071269"></script>
+    <script src="/js/highlight.pack.js?1674071269"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom-3.6.0.js?1674071269"></script>
+    <script src="/js/learn.js?1674071269"></script>
+    <script src="/js/hugo-learn.js?1674071269"></script>
+
+    <link href="/mermaid/mermaid.css?1674071269" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1674071269"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-158079754-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Build Automation with SSM on Level 300: Autonomous Patching with EC2 Image Builder and System Manager</title>
+    <link>/5-ssm-build-automation/</link>
+    <description>Recent content in Build Automation with SSM on Level 300: Autonomous Patching with EC2 Image Builder and System Manager</description>
+    <generator>Hugo -- gohugo.io</generator><atom:link href="/5-ssm-build-automation/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
