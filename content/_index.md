@@ -1,6 +1,6 @@
 ---
 title : "Autonomous Patching with EC2 Image Builder and System Manager"
-date :  "`r Sys.Date()`" 
+date: 2024-01-01
 weight : 1
 chapter : false
 ---

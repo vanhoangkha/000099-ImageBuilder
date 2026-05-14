@@ -1,6 +1,6 @@
 ---
 title : "Chủ động Cài đặt Bản vá với EC2 Image Builder và System Manager"
-date :  "`r Sys.Date()`" 
+date: 2024-01-01
 weight : 1
 chapter : false
 ---
